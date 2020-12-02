@@ -17,7 +17,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-
 /**
  * Classe auxiliar que contém os métodos para as chamadas HTTP à API Rest.
  */
