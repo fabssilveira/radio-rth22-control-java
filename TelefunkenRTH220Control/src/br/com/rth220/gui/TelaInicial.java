@@ -50,6 +50,7 @@ public class TelaInicial extends JFrame {
 	private String modo = "USB";
 	private int freq = 7000000;
 	private boolean connected = false;
+	private JLabel lblHz;
 
 	/**
 	 * Create the frame.
@@ -64,15 +65,14 @@ public class TelaInicial extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JLabel lblHz = new JLabel("Hz");
+		lblHz = new JLabel("Hz");
 		lblHz.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblHz.setBounds(453, 120, 48, 24);
+		lblHz.setBounds(513, 120, 48, 24);
 		contentPane.add(lblHz);
 
 		txtDial = new JTextField();
 		txtDial.setHorizontalAlignment(SwingConstants.CENTER);
 		txtDial.setFont(new Font("Tahoma", Font.PLAIN, 35));
-		txtDial.setText("7.000.000");
 		txtDial.setEditable(false);
 		txtDial.setBounds(193, 98, 308, 58);
 		contentPane.add(txtDial);
@@ -120,6 +120,9 @@ public class TelaInicial extends JFrame {
 		rdbtn80m = new JRadioButton("80 m");
 		rdbtn80m.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				bandaSelecionada = BANDA_80M;
+				freq = 3500000;
+				atualizaDisplay();
 			}
 		});
 		buttonGroupBands.add(rdbtn80m);
@@ -130,6 +133,9 @@ public class TelaInicial extends JFrame {
 		rdbtn40m = new JRadioButton("40 m");
 		rdbtn40m.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				bandaSelecionada = BANDA_40M;
+				freq = 7000000;
+				atualizaDisplay();
 			}
 		});
 		buttonGroupBands.add(rdbtn40m);
@@ -140,6 +146,9 @@ public class TelaInicial extends JFrame {
 		rdbtn20m = new JRadioButton("20 m");
 		rdbtn20m.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				bandaSelecionada = BANDA_20M;
+				freq = 14000000;
+				atualizaDisplay();
 			}
 		});
 		buttonGroupBands.add(rdbtn20m);
@@ -150,6 +159,9 @@ public class TelaInicial extends JFrame {
 		rdbtn15m = new JRadioButton("15 m");
 		rdbtn15m.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				bandaSelecionada = BANDA_15M;
+				freq = 21000000;
+				atualizaDisplay();
 			}
 		});
 		buttonGroupBands.add(rdbtn15m);
@@ -165,6 +177,7 @@ public class TelaInicial extends JFrame {
 		rdbtnUSB = new JRadioButton("USB");
 		rdbtnUSB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				modo = "USB";
 			}
 		});
 		buttonGroupModes.add(rdbtnUSB);
@@ -175,6 +188,7 @@ public class TelaInicial extends JFrame {
 		rdbtnLSB = new JRadioButton("LSB");
 		rdbtnLSB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				modo = "LSB";
 			}
 		});
 		buttonGroupModes.add(rdbtnLSB);
@@ -185,6 +199,17 @@ public class TelaInicial extends JFrame {
 		rdbtnFT8 = new JRadioButton("FT8");
 		rdbtnFT8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				modo = "USB";
+				if (bandaSelecionada.equals(BANDA_15M)) {
+					freq = 21074000;
+				} else if (bandaSelecionada.equals(BANDA_20M)) {
+					freq = 14074000;
+				} else if (bandaSelecionada.equals(BANDA_40M)) {
+					freq = 7074000;
+				} else if (bandaSelecionada.equals(BANDA_80M)) {
+					freq = 3574000;
+				}
+				atualizaDisplay();
 			}
 		});
 		buttonGroupModes.add(rdbtnFT8);
@@ -195,60 +220,104 @@ public class TelaInicial extends JFrame {
 		btnPlus100 = new JButton("+");
 		btnPlus100.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				freq = freq + 100;
+				if (calculaLimitesDaBanda()) {
+					atualizaDisplay();
+				} else {
+					freq = freq - 100;
+				}				
 			}
 		});
 		btnPlus100.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnPlus100.setBounds(295, 248, 48, 39);
+		btnPlus100.setBounds(353, 248, 48, 39);
 		contentPane.add(btnPlus100);
 
 		btnMinus100 = new JButton("-");
 		btnMinus100.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				freq = freq - 100;
+				if (calculaLimitesDaBanda()) {
+					atualizaDisplay();
+				} else {
+					freq = freq + 100;
+				}
 			}
 		});
 		btnMinus100.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnMinus100.setBounds(353, 248, 48, 39);
+		btnMinus100.setBounds(295, 248, 48, 39);
 		contentPane.add(btnMinus100);
 
 		btnPlus1000 = new JButton("+");
 		btnPlus1000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				freq = freq + 1000;
+				if (calculaLimitesDaBanda()) {
+					atualizaDisplay();
+				} else {
+					freq = freq - 1000;
+				}
 			}
 		});
 		btnPlus1000.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnPlus1000.setBounds(232, 241, 53, 52);
+		btnPlus1000.setBounds(411, 242, 53, 52);
 		contentPane.add(btnPlus1000);
 
 		btnMinus1000 = new JButton("-");
 		btnMinus1000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				freq = freq - 1000;
+				if (calculaLimitesDaBanda()) {
+					atualizaDisplay();
+				} else {
+					freq = freq + 1000;
+				}
 			}
 		});
 		btnMinus1000.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnMinus1000.setBounds(411, 241, 53, 52);
+		btnMinus1000.setBounds(232, 242, 53, 52);
 		contentPane.add(btnMinus1000);
 
 		btnPlus10000 = new JButton("+");
 		btnPlus10000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				freq = freq + 10000;
+				if (calculaLimitesDaBanda()) {
+					atualizaDisplay();
+				} else {
+					freq = freq - 10000;
+				}
 			}
 		});
 		btnPlus10000.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnPlus10000.setBounds(155, 234, 67, 67);
+		btnPlus10000.setBounds(474, 234, 67, 67);
 		contentPane.add(btnPlus10000);
 
-		btnMinus10000 = new JButton("+");
+		btnMinus10000 = new JButton("-");
 		btnMinus10000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				freq = freq - 10000;
+				if (calculaLimitesDaBanda()) {
+					atualizaDisplay();
+				} else {
+					freq = freq + 10000;
+				}
 			}
 		});
 		btnMinus10000.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnMinus10000.setBounds(474, 234, 67, 67);
+		btnMinus10000.setBounds(155, 234, 67, 67);
 		contentPane.add(btnMinus10000);
+		
+		initScreem();
 	}
 
 	//Métodos funcionais da classe
 	//***************************************************************************
+	
+	private void initScreem() {
+		rdbtnUSB.setSelected(true);
+		rdbtn40m.setSelected(true);
+		atualizaDisplay();
+	};
 	
 	/**
 	 * Método que lida com o botão de conexão ao rádio.
@@ -283,7 +352,7 @@ public class TelaInicial extends JFrame {
 			String bloco3 = temp.substring(5);
 			String frequencia = bloco1 + "." + bloco2 + "." + bloco3;
 			txtDial.setText(frequencia);
-		}
+		}		
 	}
 
 	/**
