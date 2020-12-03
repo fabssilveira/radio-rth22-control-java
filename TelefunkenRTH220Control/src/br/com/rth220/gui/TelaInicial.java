@@ -255,10 +255,10 @@ public class TelaInicial extends JFrame {
 	 */
 	private void buttonConnectHandler() {
 		if (connected) {
-			btnConnect.setText("Connect from Radio");
+			btnConnect.setText("Connect to Radio");
 			connected = false;
 		} else {
-			btnConnect.setText("Disconnect to Radio");
+			btnConnect.setText("Disconnect from Radio");
 			connected = true;
 		}
 		;
