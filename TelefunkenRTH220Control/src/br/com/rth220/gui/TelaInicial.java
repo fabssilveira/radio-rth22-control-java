@@ -4,9 +4,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+
+import org.json.JSONObject;
+
 import javax.swing.JButton;
 import javax.swing.border.BevelBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
@@ -14,6 +19,8 @@ import javax.swing.ButtonGroup;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import br.com.rth220.util.HttpUtils;
 
 public class TelaInicial extends JFrame {
 
@@ -47,7 +54,7 @@ public class TelaInicial extends JFrame {
 	private final String BANDA_80M = "80m";
 
 	private String bandaSelecionada = BANDA_40M;
-	private String modo = "USB";
+	private String modo = "LSB";
 	private int freq = 7000000;
 	private boolean connected = false;
 	private JLabel lblHz;
@@ -86,8 +93,17 @@ public class TelaInicial extends JFrame {
 
 		btnConnect = new JButton("Connect to Radio");
 		btnConnect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				buttonConnectHandler();
+			public void actionPerformed(ActionEvent e) {				
+				try {
+					buttonConnectHandler();
+					JSONObject response = new JSONObject(HttpUtils.consultaFrequenciaAtual());
+					bandaSelecionada = response.getString("banda");
+					freq = response.getInt("frequencia");
+					modo = response.getString("modo");					
+					atualizaDisplay();
+				} catch (Exception e1) {					
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}
 			}
 		});
 		btnConnect.setBounds(6, 6, 203, 29);
@@ -352,7 +368,25 @@ public class TelaInicial extends JFrame {
 			String bloco3 = temp.substring(5);
 			String frequencia = bloco1 + "." + bloco2 + "." + bloco3;
 			txtDial.setText(frequencia);
-		}		
+		}	
+		if (bandaSelecionada == BANDA_15M) {
+			rdbtn15m.setSelected(true);
+		}
+		if (bandaSelecionada == BANDA_20M) {
+			rdbtn20m.setSelected(true);
+		}
+		if (bandaSelecionada == BANDA_40M) {
+			rdbtn40m.setSelected(true);
+		}
+		if (bandaSelecionada == BANDA_80M) {
+			rdbtn80m.setSelected(true);
+		}
+		if (modo == "USB") {
+			rdbtnUSB.setSelected(true);
+		}
+		if (modo == "LSB") {
+			rdbtnLSB.setSelected(true);
+		}
 	}
 
 	/**

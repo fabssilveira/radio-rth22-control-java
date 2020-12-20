@@ -28,7 +28,7 @@ public class HttpUtils {
     private static OutputStream outputStream;
     private static int codigoResposta;
     private static String retorno;
-    private static String ip = "192.168.0.100";
+    private static String ip = "192.168.0.93";
     private static String endpoint = "http://"+ip+":8080"; //Endereço de rede e porta configurados no raspberry
 
     // É desejavel que o endereço ip do servidor (raspberry) seja definido como fixo ou fixado no DHCP para facilitar a configuração.
