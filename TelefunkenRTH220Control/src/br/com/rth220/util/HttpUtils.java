@@ -1,10 +1,5 @@
 package br.com.rth220.util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import br.com.rth220.model.Vfo;
-
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,6 +11,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Classe auxiliar que contém os métodos para as chamadas HTTP à API Rest.
@@ -44,7 +42,7 @@ public class HttpUtils {
         return ip;
     }
 
-    public static String defineFrequencia(Vfo vfo) throws Exception {
+    public static String defineFrequencia(int freq, String banda) throws Exception {
         try {
             URL apiEnd = new URL(endpoint + "/defineFrequencia");
             conexao = (HttpURLConnection) apiEnd.openConnection();
@@ -57,8 +55,8 @@ public class HttpUtils {
             outputStream = new BufferedOutputStream(conexao.getOutputStream());
             JSONObject json = new JSONObject();
             try {
-                json.put("freq", vfo.getFrequencia());
-                json.put("banda", vfo.getBanda());
+                json.put("freq", freq);
+                json.put("banda", banda);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -1,26 +1,26 @@
 package br.com.rth220.gui;
 
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.json.JSONObject;
 
-import javax.swing.JButton;
-import javax.swing.border.BevelBorder;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JTextField;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import br.com.rth220.util.HttpUtils;
+import java.awt.Color;
 
 public class TelaInicial extends JFrame {
 
@@ -43,12 +43,9 @@ public class TelaInicial extends JFrame {
 	private JRadioButton rdbtn80m;
 	private JRadioButton rdbtn40m;
 	private JRadioButton rdbtn20m;
-	private JRadioButton rdbtn15m;
 	private JRadioButton rdbtnUSB;
 	private JRadioButton rdbtnLSB;
-	private JRadioButton rdbtnFT8;
 
-	private final String BANDA_15M = "15m";
 	private final String BANDA_20M = "20m";
 	private final String BANDA_40M = "40m";
 	private final String BANDA_80M = "80m";
@@ -78,13 +75,14 @@ public class TelaInicial extends JFrame {
 		contentPane.add(lblHz);
 
 		txtDial = new JTextField();
+		txtDial.setForeground(Color.gray);
 		txtDial.setHorizontalAlignment(SwingConstants.CENTER);
 		txtDial.setFont(new Font("Tahoma", Font.PLAIN, 35));
 		txtDial.setEditable(false);
 		txtDial.setBounds(193, 98, 308, 58);
 		contentPane.add(txtDial);
-		txtDial.setColumns(10);
-
+		txtDial.setColumns(10);		
+		
 		JPanel panelButtons = new JPanel();
 		panelButtons.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		panelButtons.setBounds(6, 6, 678, 45);
@@ -94,16 +92,7 @@ public class TelaInicial extends JFrame {
 		btnConnect = new JButton("Connect to Radio");
 		btnConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {				
-				try {
-					buttonConnectHandler();
-					JSONObject response = new JSONObject(HttpUtils.consultaFrequenciaAtual());
-					bandaSelecionada = response.getString("banda");
-					freq = response.getInt("frequencia");
-					modo = response.getString("modo");					
-					atualizaDisplay();
-				} catch (Exception e1) {					
-					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
-				}
+				buttonConnectHandler();				
 			}
 		});
 		btnConnect.setBounds(6, 6, 203, 29);
@@ -136,54 +125,63 @@ public class TelaInicial extends JFrame {
 		rdbtn80m = new JRadioButton("80 m");
 		rdbtn80m.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				bandaSelecionada = BANDA_80M;
-				freq = 3500000;
-				atualizaDisplay();
+				try {
+					bandaSelecionada = BANDA_80M;
+					freq = 3500000;	
+					JSONObject response = new JSONObject(HttpUtils.defineFrequencia(freq, bandaSelecionada));
+					freq = response.getInt("frequencia");
+					modo = response.getString("modo");
+					atualizaDisplay();
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}
 			}
 		});
 		buttonGroupBands.add(rdbtn80m);
 		rdbtn80m.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtn80m.setBounds(30, 218, 95, 23);
+		rdbtn80m.setBounds(30, 240, 95, 23);
 		contentPane.add(rdbtn80m);
 
 		rdbtn40m = new JRadioButton("40 m");
 		rdbtn40m.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				bandaSelecionada = BANDA_40M;
-				freq = 7000000;
-				atualizaDisplay();
+				try {
+					bandaSelecionada = BANDA_40M;
+					freq = 7000000;
+					JSONObject response = new JSONObject(HttpUtils.defineFrequencia(freq, bandaSelecionada));
+					freq = response.getInt("frequencia");
+					modo = response.getString("modo");
+					atualizaDisplay();
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}
 			}
 		});
 		buttonGroupBands.add(rdbtn40m);
 		rdbtn40m.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtn40m.setBounds(30, 259, 95, 23);
+		rdbtn40m.setBounds(30, 281, 95, 23);
 		contentPane.add(rdbtn40m);
 
 		rdbtn20m = new JRadioButton("20 m");
 		rdbtn20m.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				bandaSelecionada = BANDA_20M;
-				freq = 14000000;
-				atualizaDisplay();
+			public void actionPerformed(ActionEvent e) {				
+				try {
+					bandaSelecionada = BANDA_20M;
+					freq = 14000000;
+					JSONObject response = new JSONObject(HttpUtils.defineFrequencia(freq, bandaSelecionada));
+					freq = response.getInt("frequencia");
+					modo = response.getString("modo");
+					atualizaDisplay();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}
 			}
 		});
 		buttonGroupBands.add(rdbtn20m);
 		rdbtn20m.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtn20m.setBounds(30, 300, 95, 23);
-		contentPane.add(rdbtn20m);
-
-		rdbtn15m = new JRadioButton("15 m");
-		rdbtn15m.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				bandaSelecionada = BANDA_15M;
-				freq = 21000000;
-				atualizaDisplay();
-			}
-		});
-		buttonGroupBands.add(rdbtn15m);
-		rdbtn15m.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtn15m.setBounds(30, 341, 95, 23);
-		contentPane.add(rdbtn15m);
+		rdbtn20m.setBounds(30, 322, 95, 23);
+		contentPane.add(rdbtn20m);		
 
 		JLabel lblModes = new JLabel("Modes");
 		lblModes.setHorizontalAlignment(SwingConstants.CENTER);
@@ -192,56 +190,56 @@ public class TelaInicial extends JFrame {
 
 		rdbtnUSB = new JRadioButton("USB");
 		rdbtnUSB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				modo = "USB";
+			public void actionPerformed(ActionEvent e) {				
+				try {
+					modo = "USB";
+					JSONObject response = new JSONObject(HttpUtils.defineModo(modo));	
+					freq = response.getInt("frequencia");
+					modo = response.getString("modo");
+					atualizaDisplay();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}					
 			}
 		});
 		buttonGroupModes.add(rdbtnUSB);
 		rdbtnUSB.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtnUSB.setBounds(571, 218, 95, 23);
+		rdbtnUSB.setBounds(571, 250, 95, 23);
 		contentPane.add(rdbtnUSB);
 
 		rdbtnLSB = new JRadioButton("LSB");
 		rdbtnLSB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				modo = "LSB";
-			}
+				try {
+					modo = "LSB";
+					JSONObject response = new JSONObject(HttpUtils.defineModo(modo));	
+					freq = response.getInt("frequencia");
+					modo = response.getString("modo");
+					atualizaDisplay();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}			}
 		});
 		buttonGroupModes.add(rdbtnLSB);
 		rdbtnLSB.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtnLSB.setBounds(571, 278, 95, 23);
-		contentPane.add(rdbtnLSB);
-
-		rdbtnFT8 = new JRadioButton("FT8");
-		rdbtnFT8.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				modo = "USB";
-				if (bandaSelecionada.equals(BANDA_15M)) {
-					freq = 21074000;
-				} else if (bandaSelecionada.equals(BANDA_20M)) {
-					freq = 14074000;
-				} else if (bandaSelecionada.equals(BANDA_40M)) {
-					freq = 7074000;
-				} else if (bandaSelecionada.equals(BANDA_80M)) {
-					freq = 3574000;
-				}
-				atualizaDisplay();
-			}
-		});
-		buttonGroupModes.add(rdbtnFT8);
-		rdbtnFT8.setHorizontalAlignment(SwingConstants.CENTER);
-		rdbtnFT8.setBounds(571, 341, 95, 23);
-		contentPane.add(rdbtnFT8);
+		rdbtnLSB.setBounds(571, 310, 95, 23);
+		contentPane.add(rdbtnLSB);		
 
 		btnPlus100 = new JButton("+");
 		btnPlus100.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				freq = freq + 100;
-				if (calculaLimitesDaBanda()) {
-					atualizaDisplay();
-				} else {
-					freq = freq - 100;
-				}				
+				try {
+					freq = freq + 100;
+					if (calculaLimitesDaBanda()) {
+						JSONObject response = new JSONObject(HttpUtils.aumentaFrequencia(100));
+						freq = response.getInt("frequencia");
+						atualizaDisplay();
+					} else {
+						freq = freq - 100;
+					}					
+				} catch (Exception e1 ) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}								
 			}
 		});
 		btnPlus100.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -251,12 +249,18 @@ public class TelaInicial extends JFrame {
 		btnMinus100 = new JButton("-");
 		btnMinus100.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				freq = freq - 100;
-				if (calculaLimitesDaBanda()) {
-					atualizaDisplay();
-				} else {
-					freq = freq + 100;
-				}
+				try {
+					freq = freq - 100;
+					if (calculaLimitesDaBanda()) {
+						JSONObject response = new JSONObject(HttpUtils.diminuiFrequencia(100));
+						freq = response.getInt("frequencia");
+						atualizaDisplay();
+					} else {
+						freq = freq + 100;
+					}					
+				} catch (Exception e1 ) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}	
 			}
 		});
 		btnMinus100.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -266,12 +270,18 @@ public class TelaInicial extends JFrame {
 		btnPlus1000 = new JButton("+");
 		btnPlus1000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				freq = freq + 1000;
-				if (calculaLimitesDaBanda()) {
-					atualizaDisplay();
-				} else {
-					freq = freq - 1000;
-				}
+				try {
+					freq = freq + 1000;
+					if (calculaLimitesDaBanda()) {
+						JSONObject response = new JSONObject(HttpUtils.aumentaFrequencia(1000));
+						freq = response.getInt("frequencia");
+						atualizaDisplay();
+					} else {
+						freq = freq - 1000;
+					}					
+				} catch (Exception e1 ) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}	
 			}
 		});
 		btnPlus1000.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -281,12 +291,18 @@ public class TelaInicial extends JFrame {
 		btnMinus1000 = new JButton("-");
 		btnMinus1000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				freq = freq - 1000;
-				if (calculaLimitesDaBanda()) {
-					atualizaDisplay();
-				} else {
-					freq = freq + 1000;
-				}
+				try {
+					freq = freq - 1000;
+					if (calculaLimitesDaBanda()) {
+						JSONObject response = new JSONObject(HttpUtils.diminuiFrequencia(1000));
+						freq = response.getInt("frequencia");
+						atualizaDisplay();
+					} else {
+						freq = freq + 1000;
+					}					
+				} catch (Exception e1 ) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}	
 			}
 		});
 		btnMinus1000.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -296,12 +312,18 @@ public class TelaInicial extends JFrame {
 		btnPlus10000 = new JButton("+");
 		btnPlus10000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				freq = freq + 10000;
-				if (calculaLimitesDaBanda()) {
-					atualizaDisplay();
-				} else {
-					freq = freq - 10000;
-				}
+				try {
+					freq = freq + 10000;
+					if (calculaLimitesDaBanda()) {
+						JSONObject response = new JSONObject(HttpUtils.aumentaFrequencia(10000));
+						freq = response.getInt("frequencia");
+						atualizaDisplay();
+					} else {
+						freq = freq - 10000;
+					}					
+				} catch (Exception e1 ) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}	
 			}
 		});
 		btnPlus10000.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -311,12 +333,18 @@ public class TelaInicial extends JFrame {
 		btnMinus10000 = new JButton("-");
 		btnMinus10000.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				freq = freq - 10000;
-				if (calculaLimitesDaBanda()) {
-					atualizaDisplay();
-				} else {
-					freq = freq + 10000;
-				}
+				try {
+					freq = freq - 10000;
+					if (calculaLimitesDaBanda()) {
+						JSONObject response = new JSONObject(HttpUtils.diminuiFrequencia(10000));
+						freq = response.getInt("frequencia");
+						atualizaDisplay();
+					} else {
+						freq = freq + 10000;
+					}					
+				} catch (Exception e1 ) {
+					JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+				}	
 			}
 		});
 		btnMinus10000.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -329,10 +357,37 @@ public class TelaInicial extends JFrame {
 	//Métodos funcionais da classe
 	//***************************************************************************
 	
-	private void initScreem() {
-		rdbtnUSB.setSelected(true);
-		rdbtn40m.setSelected(true);
+	private void initScreem() {		
 		atualizaDisplay();
+		disableButtons();
+	};
+	
+	private void enableButtons() {
+		btnMinus100.setEnabled(true);
+		btnMinus1000.setEnabled(true);
+		btnMinus10000.setEnabled(true);
+		btnPlus100.setEnabled(true);
+		btnPlus1000.setEnabled(true);
+		btnPlus10000.setEnabled(true);
+		rdbtn20m.setEnabled(true);
+		rdbtn40m.setEnabled(true);
+		rdbtn80m.setEnabled(true);
+		rdbtnLSB.setEnabled(true);
+		rdbtnUSB.setEnabled(true);
+	};
+	
+	private void disableButtons() {
+		btnMinus100.setEnabled(false);
+		btnMinus1000.setEnabled(false);
+		btnMinus10000.setEnabled(false);
+		btnPlus100.setEnabled(false);
+		btnPlus1000.setEnabled(false);
+		btnPlus10000.setEnabled(false);
+		rdbtn20m.setEnabled(false);
+		rdbtn40m.setEnabled(false);
+		rdbtn80m.setEnabled(false);
+		rdbtnLSB.setEnabled(false);
+		rdbtnUSB.setEnabled(false);
 	};
 	
 	/**
@@ -342,11 +397,30 @@ public class TelaInicial extends JFrame {
 		if (connected) {
 			btnConnect.setText("Connect to Radio");
 			connected = false;
+			txtDial.setForeground(Color.gray);
+			disableButtons();
 		} else {
 			btnConnect.setText("Disconnect from Radio");
 			connected = true;
-		}
-		;
+			txtDial.setForeground(Color.black);
+			enableButtons();
+			try {
+				JSONObject response = new JSONObject(HttpUtils.identificaBanda());
+				bandaSelecionada = response.getString("banda");
+				if (bandaSelecionada.equals(BANDA_20M)) {
+					rdbtn20m.doClick();
+				}
+				if (bandaSelecionada.equals(BANDA_40M)) {
+					rdbtn40m.doClick();
+				}
+				if (bandaSelecionada.equals(BANDA_80M)) {
+					rdbtn80m.doClick();
+				}
+				atualizaDisplay();
+			} catch (Exception e1) {					
+				JOptionPane.showMessageDialog(null, "Erro de conexão, tente novamente...");
+			}
+		}		
 	}
 
 	/**
@@ -368,25 +442,22 @@ public class TelaInicial extends JFrame {
 			String bloco3 = temp.substring(5);
 			String frequencia = bloco1 + "." + bloco2 + "." + bloco3;
 			txtDial.setText(frequencia);
-		}	
-		if (bandaSelecionada == BANDA_15M) {
-			rdbtn15m.setSelected(true);
-		}
-		if (bandaSelecionada == BANDA_20M) {
+		}			
+		if (bandaSelecionada.equals(BANDA_20M)) {
 			rdbtn20m.setSelected(true);
 		}
-		if (bandaSelecionada == BANDA_40M) {
+		if (bandaSelecionada.equals(BANDA_40M)) {
 			rdbtn40m.setSelected(true);
 		}
-		if (bandaSelecionada == BANDA_80M) {
+		if (bandaSelecionada.equals(BANDA_80M)) {
 			rdbtn80m.setSelected(true);
 		}
-		if (modo == "USB") {
+		if (modo.equals("USB")) {			
 			rdbtnUSB.setSelected(true);
 		}
-		if (modo == "LSB") {
+		if (modo.equals("LSB")){			
 			rdbtnLSB.setSelected(true);
-		}
+		}		
 	}
 
 	/**
@@ -397,13 +468,7 @@ public class TelaInicial extends JFrame {
 	 * @return boolean
 	 */
 	private boolean calculaLimitesDaBanda() {
-		if (bandaSelecionada.equals(BANDA_15M)) {
-			if (freq >= 21000000 && freq <= 21450000) {
-				return true;
-			} else {
-				return false;
-			}
-		} else if (bandaSelecionada.equals(BANDA_20M)) {
+		if (bandaSelecionada.equals(BANDA_20M)) {
 			if (freq >= 14000000 && freq <= 14350000) {
 				return true;
 			} else {
