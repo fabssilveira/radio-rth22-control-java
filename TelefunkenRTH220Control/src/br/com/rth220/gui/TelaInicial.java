@@ -101,6 +101,8 @@ public class TelaInicial extends JFrame {
 		btnUpdateHostIP = new JButton("Update Host IP");
 		btnUpdateHostIP.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				TelaConfig config = new TelaConfig();
+				config.setVisible(true);
 			}
 		});
 		btnUpdateHostIP.setBounds(219, 6, 145, 29);
